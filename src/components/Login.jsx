@@ -11,7 +11,7 @@ const Login = () => {
 
     try {
       const response = await fetch(
-        "http://swappo-6zd6.onrender.com/api/login",
+        "https://swappo-6zd6.onrender.com/api/login",
         {
           method: "POST",
           headers: {

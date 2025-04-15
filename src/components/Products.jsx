@@ -34,7 +34,7 @@ const Products = () => {
 
         const token = localStorage.getItem("token"); // Get token from localStorage
         const response = await fetch(
-          "http://swappo-6zd6.onrender.com/api/products",
+          "https://swappo-6zd6.onrender.com/api/products",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -104,7 +104,7 @@ const Products = () => {
     try {
       console.log("I am in try block");
       const response = await fetch(
-        "http://swappo-6zd6.onrender.com/api/products",
+        "https://swappo-6zd6.onrender.com/api/products",
         {
           method: "POST",
           headers: {
@@ -176,7 +176,7 @@ const Products = () => {
 
     try {
       const response = await fetch(
-        `http://swappo-6zd6.onrender.com/api/products/${selectedProduct._id}`,
+        `https://swappo-6zd6.onrender.com/api/products/${selectedProduct._id}`,
         {
           method: "PUT",
           headers: {
@@ -232,7 +232,7 @@ const Products = () => {
                 <img
                   src={
                     product.images && product.images.length > 0
-                      ? `http://swappo-6zd6.onrender.com/uploads/${product.images[0]}`
+                      ? `https://swappo-6zd6.onrender.com/uploads/${product.images[0]}`
                       : "https://via.placeholder.com/150" // Default placeholder image
                   }
                   alt={product.name}

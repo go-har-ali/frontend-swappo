@@ -26,7 +26,7 @@ const Register = () => {
 
     try {
       const response = await fetch(
-        "http://swappo-6zd6.onrender.com/api/register",
+        "https://swappo-6zd6.onrender.com/api/register",
         {
           method: "POST",
           body: formData,
