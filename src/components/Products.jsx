@@ -33,11 +33,14 @@ const Products = () => {
         setLoading(true);
 
         const token = localStorage.getItem("token"); // Get token from localStorage
-        const response = await fetch("http://localhost:5000/api/products", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await fetch(
+          "http://swappo-6zd6.onrender.com/api/products",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         if (!response.ok) throw new Error("Failed to fetch products");
         const data = await response.json();
         setProducts(data);
@@ -100,13 +103,16 @@ const Products = () => {
 
     try {
       console.log("I am in try block");
-      const response = await fetch("http://localhost:5000/api/products", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`, // Attach the token
-        },
-        body: formData,
-      });
+      const response = await fetch(
+        "http://swappo-6zd6.onrender.com/api/products",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`, // Attach the token
+          },
+          body: formData,
+        }
+      );
 
       console.log("posted successfully!");
 
@@ -170,7 +176,7 @@ const Products = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/api/products/${selectedProduct._id}`,
+        `http://swappo-6zd6.onrender.com/api/products/${selectedProduct._id}`,
         {
           method: "PUT",
           headers: {
@@ -226,7 +232,7 @@ const Products = () => {
                 <img
                   src={
                     product.images && product.images.length > 0
-                      ? `http://localhost:5000/uploads/${product.images[0]}`
+                      ? `http://swappo-6zd6.onrender.com/uploads/${product.images[0]}`
                       : "https://via.placeholder.com/150" // Default placeholder image
                   }
                   alt={product.name}

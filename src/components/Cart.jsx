@@ -55,7 +55,7 @@ const Cart = () => {
                     <img
                       src={
                         item.images && item.images.length > 0
-                          ? `http://localhost:5000/uploads/${item.images[0]}`
+                          ? `http://swappo-6zd6.onrender.com/uploads/${item.images[0]}`
                           : "https://via.placeholder.com/150"
                       }
                       alt={item.name}

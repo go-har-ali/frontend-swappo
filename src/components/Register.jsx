@@ -25,10 +25,13 @@ const Register = () => {
     formData.append("role", role); // Include role
 
     try {
-      const response = await fetch("http://localhost:5000/api/register", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        "http://swappo-6zd6.onrender.com/api/register",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
       const data = await response.json();
 
