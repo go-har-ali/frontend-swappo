@@ -166,6 +166,24 @@ const Home = () => {
           </button>
         </div>
 
+        {/* 📽️ Intro Video Section */}
+        <div className="w-full py-12 bg-gray-100">
+          {/* <hr className="border-gray-300 my-4" /> */}
+
+          <div className="w-full">
+            <video
+              className="w-full h-auto rounded-none"
+              autoPlay
+              loop
+              muted
+              controls
+            >
+              <source src="Swappo_Home_Intro.mp4" type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        </div>
+
         {/* Hero Section */}
         <div className="bg-gray-100 text-black text-center py-12">
           <h1 className="text-4xl font-bold">Welcome to Swappo</h1>
@@ -201,27 +219,6 @@ const Home = () => {
           </div>
         </div>
 
-        {/* 📽️ Intro Video Section */}
-        <div className="container mx-auto px-4 py-12">
-          <hr className="border-gray-300 my-4" />
-
-          <h2 className="text-2xl font-semibold text-center mb-4">
-            Explore Swappo
-          </h2>
-          <div className="flex justify-center">
-            <video
-              className="w-full md:w-3/4 rounded-lg shadow-lg"
-              autoPlay
-              loop
-              muted
-              controls
-            >
-              <source src="Swappo_Home_Intro.mp4" type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
-          </div>
-        </div>
-
         {/* Featured Products Section */}
         <div className="container mx-auto px-4 py-12">
           <h2 className="text-5xl font-semibold text-center mb-6">
@@ -242,12 +239,21 @@ const Home = () => {
                 />
                 <h3 className="text-lg font-bold">{product.name}</h3>
                 <p className="text-gray-600">{product.price}</p>
-                <button
-                  onClick={() => handleAddToCart(product)}
-                  className="mt-2 bg-black text-white px-4 py-2 rounded hover:bg-gray-700"
-                >
-                  Add to Cart
-                </button>
+
+                <div className="flex justify-center gap-3 mt-3">
+                  <button
+                    onClick={() => handleAddToCart(product)}
+                    className="bg-black text-white px-4 py-2 rounded hover:bg-gray-700"
+                  >
+                    Buy Now
+                  </button>
+                  <button
+                    onClick={() => navigate(`/trade/${product.id}`)}
+                    className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+                  >
+                    Trade
+                  </button>
+                </div>
               </div>
             ))}
           </div>
@@ -259,6 +265,27 @@ const Home = () => {
 };
 
 export default Home;
+
+// {products.map((product) => (
+//   <div
+//     key={product.id}
+//     className="bg-white shadow-md rounded-lg p-4 text-center"
+//   >
+//     <img
+//       src={product.img}
+//       alt={product.name}
+//       className="mx-auto mb-3 h-40 w-auto object-contain"
+//     />
+//     <h3 className="text-lg font-bold">{product.name}</h3>
+//     <p className="text-gray-600">{product.price}</p>
+//     <button
+//       onClick={() => handleAddToCart(product)}
+//       className="mt-2 bg-black text-white px-4 py-2 rounded hover:bg-gray-700"
+//     >
+//       Add to Cart
+//     </button>
+//   </div>
+// ))}
 
 // import { Link, useNavigate } from "react-router-dom";
 // import { useEffect } from "react";
