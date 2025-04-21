@@ -6,6 +6,7 @@ import Home from "./components/Home";
 import Cart from "./components/Cart";
 import Products from "./components/Products";
 import Contact from "./components/Contact";
+import TradeRequestsPage from "./components/TradeRequestsPage";
 import CheckoutPage from "./components/CheckoutPage";
 import Login from "./components/Login";
 import Register from "./components/Register";
@@ -13,6 +14,7 @@ import Inventory from "./components/Inventory";
 //import CreateProducts from "./components/CreateProduct";
 import MakeAnOffer from "./components/Offer";
 import socket from "./socket";
+import SelectOfferPage from "./components/SelectOfferPage";
 
 function App() {
   useEffect(() => {
@@ -32,7 +34,9 @@ function App() {
           {/* <Route path="/createproducts" element={<CreateProducts />} /> */}
           <Route path="/home" element={<Home />} />
           <Route path="/products" element={<Products />} />
+          <Route path="/trade/:id" element={<SelectOfferPage />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/trade-requests" element={<TradeRequestsPage />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/inventory" element={<Inventory />} />
           <Route path="/offer" element={<MakeAnOffer />} />

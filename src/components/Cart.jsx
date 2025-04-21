@@ -10,6 +10,11 @@ const Cart = () => {
   const { cart, removeFromCart, updateQuantity, clearCart } = useCart();
   const navigate = useNavigate();
 
+  const BASE_URL =
+    window.location.hostname === "localhost"
+      ? "http://localhost:5000"
+      : "https://swappo-6zd6.onrender.com";
+
   const handleTrade = (item) => {
     const fromUserId = localStorage.getItem("userId");
     const toUserId = item.ownerId; // Get this from product data
@@ -55,7 +60,7 @@ const Cart = () => {
                     <img
                       src={
                         item.images && item.images.length > 0
-                          ? `https://swappo-6zd6.onrender.com/uploads/${item.images[0]}`
+                          ? `${BASE_URL}/uploads/${item.images[0]}`
                           : "https://via.placeholder.com/150"
                       }
                       alt={item.name}
@@ -72,7 +77,7 @@ const Cart = () => {
                   <div className="w-2/3 p-4">
                     <h2 className="text-2xl font-bold">{item.name}</h2>
                     <p className="text-xl font-semibold text-gray-800 mt-2">
-                      ${item.price.toFixed(2)}
+                      ${(Number(item.price) * item.quantity).toFixed(2)}
                     </p>
 
                     <div className="mt-4 flex items-center">

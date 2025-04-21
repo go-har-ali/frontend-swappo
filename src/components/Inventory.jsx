@@ -30,6 +30,11 @@ const Inventory = () => {
   const { addToCart } = useCart();
   const navigate = useNavigate();
 
+  const BASE_URL =
+    window.location.hostname === "localhost"
+      ? "http://localhost:5000"
+      : "https://swappo-6zd6.onrender.com";
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -37,15 +42,12 @@ const Inventory = () => {
         setLoading(true);
         const token = localStorage.getItem("token"); // Get token from localStorage
         console.log("Token In Inventory:", token); // Debugging output
-        const response = await fetch(
-          "https://swappo-6zd6.onrender.com/api/products/inventory",
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await fetch(`${BASE_URL}/api/products/inventory`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         if (!response.ok) throw new Error("Failed to fetch products");
         const data = await response.json();
         console.log("Fetched Products in Inventory:", data); // Debugging output
@@ -134,16 +136,13 @@ const Inventory = () => {
 
     try {
       console.log("I am in try block");
-      const response = await fetch(
-        "https://swappo-6zd6.onrender.com/api/products",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`, // Attach the token
-          },
-          body: formData,
-        }
-      );
+      const response = await fetch(`${BASE_URL}/api/products`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`, // Attach the token
+        },
+        body: formData,
+      });
 
       console.log("posted successfully!");
 
@@ -207,7 +206,7 @@ const Inventory = () => {
 
     try {
       const response = await fetch(
-        `https://swappo-6zd6.onrender.com/api/products/${selectedProduct._id}`,
+        `${BASE_URL}/api/products/${selectedProduct._id}`,
         {
           method: "PUT",
           headers: {
@@ -264,7 +263,7 @@ const Inventory = () => {
                 <img
                   src={
                     product.images && product.images.length > 0
-                      ? `https://swappo-6zd6.onrender.com/uploads/${product.images[0]}`
+                      ? `${BASE_URL}/uploads/${product.images[0]}`
                       : "https://via.placeholder.com/150" // Default placeholder image
                   }
                   alt={product.name}

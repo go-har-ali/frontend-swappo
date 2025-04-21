@@ -27,31 +27,62 @@ const Products = () => {
   const { addToCart } = useCart();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setLoading(true);
+  const BASE_URL =
+    window.location.hostname === "localhost"
+      ? "http://localhost:5000"
+      : "https://swappo-6zd6.onrender.com";
 
-        const token = localStorage.getItem("token"); // Get token from localStorage
-        const response = await fetch(
-          "https://swappo-6zd6.onrender.com/api/products",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        if (!response.ok) throw new Error("Failed to fetch products");
-        const data = await response.json();
-        setProducts(data);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-        setError(error.message);
-      } finally {
-        setLoading(false);
+  const fetchAllProducts = async () => {
+    try {
+      setLoading(true);
+
+      const token = localStorage.getItem("token");
+      console.log("Token in Products Page:", token);
+
+      const publicRes = await fetch(`${BASE_URL}/api/products`);
+      const publicData = await publicRes.json();
+
+      let inventoryData = [];
+
+      if (token) {
+        const inventoryRes = await fetch(`${BASE_URL}/api/products/inventory`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (inventoryRes.ok) {
+          inventoryData = await inventoryRes.json();
+          console.log(
+            "Fetched inventory data in Products page:",
+            inventoryData
+          );
+        } else {
+          const errorData = await inventoryRes.text();
+          console.error(
+            "Inventory fetch failed:",
+            inventoryRes.status,
+            errorData
+          );
+        }
       }
-    };
-    fetchProducts();
+
+      const combined = [...publicData, ...inventoryData];
+      const uniqueProducts = Array.from(
+        new Map(combined.map((p) => [p._id, p])).values()
+      );
+
+      setProducts(uniqueProducts);
+    } catch (err) {
+      console.error("Error fetching products:", err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAllProducts();
   }, []);
 
   useEffect(() => {
@@ -75,16 +106,22 @@ const Products = () => {
     }
   }, []);
 
-  const filteredProducts = products.filter(
-    (product) =>
-      product.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      (category === "All" || product.category === category)
-  );
+  console.log("All combined products:", products);
+
+  // const filteredProducts = products.filter(
+  //   (product) =>
+  //     product.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+  //     (category === "All" || product.category === category)
+  // );
+
+  const filteredProducts = products;
 
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
   const startIndex = (currentPage - 1) * productsPerPage;
   const endIndex = startIndex + productsPerPage;
   const displayedProducts = filteredProducts.slice(startIndex, endIndex);
+
+  console.log("Displayed Products:", displayedProducts);
 
   const handleAddToCart = (product) => {
     addToCart(product);
@@ -103,16 +140,13 @@ const Products = () => {
 
     try {
       console.log("I am in try block");
-      const response = await fetch(
-        "https://swappo-6zd6.onrender.com/api/products",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`, // Attach the token
-          },
-          body: formData,
-        }
-      );
+      const response = await fetch(`${BASE_URL}/api/products`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
 
       console.log("posted successfully!");
 
@@ -176,11 +210,11 @@ const Products = () => {
 
     try {
       const response = await fetch(
-        `https://swappo-6zd6.onrender.com/api/products/${selectedProduct._id}`,
+        `${BASE_URL}/api/products/${selectedProduct._id}`,
         {
           method: "PUT",
           headers: {
-            Authorization: `Bearer ${token}`, // Attach the token
+            Authorization: `Bearer ${token}`,
           },
           body: formData,
         }
@@ -232,7 +266,7 @@ const Products = () => {
                 <img
                   src={
                     product.images && product.images.length > 0
-                      ? `https://swappo-6zd6.onrender.com/uploads/${product.images[0]}`
+                      ? `${BASE_URL}/uploads/${product.images[0]}`
                       : "https://via.placeholder.com/150" // Default placeholder image
                   }
                   alt={product.name}
@@ -240,12 +274,24 @@ const Products = () => {
                 />
                 <h3 className="text-lg font-semibold">{product.name}</h3>
                 <p className="text-gray-600">${product.price}</p>
-                <button
-                  onClick={() => handleAddToCart(product)}
-                  className="mt-2 bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition"
-                >
-                  Add to Cart
-                </button>
+                <div className="flex justify-center gap-3 mt-3">
+                  <button
+                    onClick={() => handleAddToCart(product)}
+                    className="bg-black text-white px-4 py-2 rounded hover:bg-gray-700"
+                  >
+                    Buy Now
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      console.log("Navigating to:", `/trade/${product._id}`);
+                      navigate(`/trade/${product._id}`);
+                    }}
+                    className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+                  >
+                    Trade
+                  </button>
+                </div>
               </motion.div>
             ))
           ) : (
@@ -254,6 +300,51 @@ const Products = () => {
             </p>
           )}
         </motion.div>
+        {/* Pagination Controls */}
+        <div className="flex justify-center items-center mt-6 gap-2">
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className={`px-3 py-1 rounded ${
+              currentPage === 1
+                ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                : "bg-black text-white hover:bg-gray-800"
+            }`}
+          >
+            Prev
+          </button>
+
+          {[...Array(totalPages)].map((_, index) => {
+            const page = index + 1;
+            return (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                className={`px-3 py-1 rounded ${
+                  currentPage === page
+                    ? "bg-red-600 text-white"
+                    : "bg-gray-200 text-black hover:bg-gray-300"
+                }`}
+              >
+                {page}
+              </button>
+            );
+          })}
+
+          <button
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
+            disabled={currentPage === totalPages}
+            className={`px-3 py-1 rounded ${
+              currentPage === totalPages
+                ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                : "bg-black text-white hover:bg-gray-800"
+            }`}
+          >
+            Next
+          </button>
+        </div>
       </div>
       <Footer />
     </>
@@ -261,6 +352,81 @@ const Products = () => {
 };
 
 export default Products;
+
+// `https://swappo-6zd6.onrender.com/uploads/${product.images[0]}`
+
+// useEffect(() => {
+//   const fetchAllProducts = async () => {
+//     try {
+//       setLoading(true);
+
+//       const token = localStorage.getItem("token");
+
+//       // Public Products
+//       const publicRes = await fetch(`${BASE_URL}/api/products`);
+//       const publicData = await publicRes.json();
+
+//       let inventoryData = [];
+
+//       if (token) {
+//         const inventoryRes = await fetch(
+//           `${BASE_URL}/api/products/inventory`,
+//           {
+//             headers: {
+//               Authorization: `Bearer ${token}`,
+//             },
+//           }
+//         );
+
+//         if (inventoryRes.ok) {
+//           inventoryData = await inventoryRes.json();
+//         }
+//       }
+
+//       // Combine both
+//       const combined = [...publicData, ...inventoryData];
+
+//       // Remove duplicates (optional)
+//       const uniqueProducts = Array.from(
+//         new Map(combined.map((p) => [p._id, p])).values()
+//       );
+
+//       setProducts(uniqueProducts);
+//     } catch (err) {
+//       console.error("Error fetching products:", err);
+//       setError(err.message);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   fetchAllProducts();
+// }, []);
+
+// useEffect(() => {
+//   const fetchProducts = async () => {
+//     try {
+//       setLoading(true);
+
+//       const token = localStorage.getItem("token"); // Get token from localStorage
+//       const response = await fetch(`${BASE_URL}/api/products`, {
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//         },
+//       });
+
+//       if (!response.ok) throw new Error("Failed to fetch products");
+//       const data = await response.json();
+//       setProducts(data);
+//     } catch (error) {
+//       console.error("Error fetching products:", error);
+//       setError(error.message);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+//   fetchProducts();
+// }, []);
 
 // import { useEffect, useState } from "react";
 // import { motion } from "framer-motion";

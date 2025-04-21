@@ -10,19 +10,22 @@ const Login = () => {
     event.preventDefault();
 
     try {
-      const response = await fetch(
-        "https://swappo-6zd6.onrender.com/api/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email, // Ensure these are correctly capturing user input
-            password,
-          }),
-        }
-      );
+      const BASE_URL =
+        window.location.hostname === "localhost"
+          ? "http://localhost:5000"
+          : "https://swappo-6zd6.onrender.com";
+
+      const response = await fetch(`${BASE_URL}/api/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+
       const data = await response.json();
 
       if (response.ok) {

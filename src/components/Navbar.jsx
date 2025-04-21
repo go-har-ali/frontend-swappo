@@ -24,6 +24,12 @@ const Navbar = () => {
           <Link to="/cart" className="hover:text-gray-400">
             Cart
           </Link>
+          <Link
+            to="/trade-requests"
+            className="text-white hover:text-gray-300 transition"
+          >
+            Trade Requests
+          </Link>
           <Link to="/contact" className="hover:text-gray-400">
             Contact
           </Link>
