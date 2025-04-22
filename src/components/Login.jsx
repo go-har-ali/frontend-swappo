@@ -10,10 +10,12 @@ const Login = () => {
     event.preventDefault();
 
     try {
-      const BASE_URL =
-        window.location.hostname === "localhost"
-          ? "http://localhost:5000"
-          : "https://swappo-6zd6.onrender.com";
+      const BASE_URL = "https://swappo-6zd6.onrender.com";
+
+      // const BASE_URL =
+      //   window.location.hostname === "localhost"
+      //     ? "http://localhost:5000"
+      //     : "https://swappo-6zd6.onrender.com";
 
       const response = await fetch(`${BASE_URL}/api/login`, {
         method: "POST",
