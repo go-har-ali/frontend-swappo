@@ -7,6 +7,11 @@ const BASE_URL = "https://swappo-6zd6.onrender.com";
 //     ? "http://localhost:5000"
 //     : "https://swappo-6zd6.onrender.com";
 
-const socket = io(BASE_URL); // Make sure it connects immediately
+//const socket = io(BASE_URL); // Make sure it connects immediately
+
+const socket = io("https://swappo-6zd6.onrender.com", {
+  withCredentials: true,
+  transports: ["polling", "websocket"], // Add both
+});
 
 export default socket;
