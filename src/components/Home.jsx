@@ -199,7 +199,7 @@ const Home = () => {
         </div> */}
 
         {/* Trade Section */}
-        <div className="bg-gray-100 text-black text-center py-8 flex justify-center items-center gap-10">
+        {/* <div className="bg-gray-100 text-black text-center py-8 flex justify-center items-center gap-10">
           <div className="text-center">
             <div className="w-0 h-0 border-l-32 border-l-transparent border-r-32 border-r-transparent border-b-40 border-b-red-500 mx-auto"></div>
 
@@ -217,7 +217,7 @@ const Home = () => {
             </button>
             <div className="w-0 h-0 border-l-32 border-l-transparent border-r-32 border-r-transparent border-t-40 border-t-red-500 mx-auto"></div>
           </div>
-        </div>
+        </div> */}
 
         {/* Featured Products Section */}
         <div className="container mx-auto px-4 py-12">
