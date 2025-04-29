@@ -1,9 +1,15 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FiMenu, FiX } from "react-icons/fi";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // Adjust key if your token key is different
+    navigate("/login");
+  };
 
   return (
     <nav className="bg-black text-white p-4 shadow-md">
@@ -33,6 +39,12 @@ const Navbar = () => {
           <Link to="/contact" className="hover:text-gray-400">
             Contact
           </Link>
+          <button
+            onClick={handleLogout}
+            className="hover:text-gray-400 transition"
+          >
+            Logout
+          </button>
         </div>
 
         {/* Mobile Menu Button */}
@@ -79,6 +91,15 @@ const Navbar = () => {
           >
             Contact
           </Link>
+          <button
+            onClick={() => {
+              handleLogout();
+              setMenuOpen(false);
+            }}
+            className="hover:text-gray-400"
+          >
+            Logout
+          </button>
         </div>
       )}
     </nav>
