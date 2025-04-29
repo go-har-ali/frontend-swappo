@@ -66,6 +66,13 @@ const Navbar = () => {
             Cart
           </Link>
           <Link
+            to="/trade-requests"
+            className="hover:text-gray-400"
+            onClick={() => setMenuOpen(false)}
+          >
+            Trade Requests
+          </Link>
+          <Link
             to="/contact"
             className="hover:text-gray-400"
             onClick={() => setMenuOpen(false)}
