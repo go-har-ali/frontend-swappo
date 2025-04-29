@@ -185,7 +185,7 @@ const Home = () => {
         </div>
 
         {/* Hero Section */}
-        <div className="bg-gray-100 text-black text-center py-12">
+        {/* <div className="bg-gray-100 text-black text-center py-12">
           <h1 className="text-4xl font-bold">Welcome to Swappo</h1>
           <p className="text-lg mt-2">
             Find the best deals on your favorite products!
@@ -196,7 +196,7 @@ const Home = () => {
           >
             Shop Now
           </Link>
-        </div>
+        </div> */}
 
         {/* Trade Section */}
         <div className="bg-gray-100 text-black text-center py-8 flex justify-center items-center gap-10">
