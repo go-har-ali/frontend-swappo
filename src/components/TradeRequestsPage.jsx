@@ -37,6 +37,7 @@ const TradeRequestsPage = () => {
       console.log("Fetching trade requests for user:", userId);
       try {
         const res = await fetch(`${BASE_URL}/api/trade-requests/received`, {
+          method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
           },
