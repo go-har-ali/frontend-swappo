@@ -14,6 +14,7 @@ const BASE_URL =
 
 const TradeRequestsPage = () => {
   const [tradeRequests, setTradeRequests] = useState([]);
+  const [sentTradeRequests, setSentTradeRequests] = useState([]);
   //const userId = localStorage.getItem("userId");
 
   console.log(
@@ -36,16 +37,30 @@ const TradeRequestsPage = () => {
     const fetchTradeRequests = async () => {
       console.log("Fetching trade requests for user:", userId);
       try {
-        const res = await fetch(`${BASE_URL}/api/trade-requests/received`, {
+        // Fetch received trade requests
+        const resReceived = await fetch(
+          `${BASE_URL}/api/trade-requests/received`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const dataReceived = await resReceived.json();
+        console.log("Received trade requests:", dataReceived);
+        setTradeRequests(dataReceived);
+
+        // Fetch sent trade requests
+        const resSent = await fetch(`${BASE_URL}/api/trade-requests/sent`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        const data = await res.json();
-        console.log("Received trade requests:", data);
-
-        setTradeRequests(data);
+        const dataSent = await resSent.json();
+        console.log("Sent trade requests:", dataSent);
+        setSentTradeRequests(dataSent);
       } catch (error) {
         console.error("Failed to fetch trade requests:", error);
       }
@@ -53,6 +68,28 @@ const TradeRequestsPage = () => {
 
     fetchTradeRequests();
   }, [token]);
+
+  // useEffect(() => {
+  //   const fetchTradeRequests = async () => {
+  //     console.log("Fetching trade requests for user:", userId);
+  //     try {
+  //       const res = await fetch(`${BASE_URL}/api/trade-requests/received`, {
+  //         method: "GET",
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       });
+  //       const data = await res.json();
+  //       console.log("Received trade requests:", data);
+
+  //       setTradeRequests(data);
+  //     } catch (error) {
+  //       console.error("Failed to fetch trade requests:", error);
+  //     }
+  //   };
+
+  //   fetchTradeRequests();
+  // }, [token]);
 
   useEffect(() => {
     socket.emit("join", userId);
@@ -136,7 +173,92 @@ const TradeRequestsPage = () => {
     <>
       <Navbar />
       <div className="min-h-screen bg-gray-100 p-6">
+        {/* RECEIVED TRADE REQUESTS */}
         <h1 className="text-3xl font-bold mb-6">Incoming Trade Requests</h1>
+
+        {tradeRequests.length === 0 ? (
+          <p>No incoming trade requests at the moment.</p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+            {tradeRequests.map((trade) => (
+              <div
+                key={trade._id}
+                className="bg-white p-4 rounded shadow-md flex flex-col gap-4"
+              >
+                <h2 className="text-xl font-semibold">Requested Product</h2>
+                <TradeProductCard product={trade.requestedProduct} />
+
+                <h2 className="text-xl font-semibold">Offered Product</h2>
+                <TradeProductCard product={trade.offeredProduct} />
+
+                <p className="text-gray-700">
+                  <strong>Price Difference:</strong>{" "}
+                  {trade.priceDifference > 0
+                    ? `$${trade.priceDifference.toFixed(2)} to pay`
+                    : trade.priceDifference < 0
+                    ? `$${Math.abs(trade.priceDifference).toFixed(
+                        2
+                      )} to collect`
+                    : "Even trade"}
+                </p>
+
+                <div className="flex gap-4 mt-2">
+                  <button
+                    onClick={() =>
+                      handleRespond(
+                        trade._id,
+                        "accepted",
+                        trade.priceDifference
+                      )
+                    }
+                    className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+                  >
+                    Accept
+                  </button>
+                  <button
+                    onClick={() => handleRespond(trade._id, "rejected")}
+                    className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+                  >
+                    Reject
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* SENT TRADE REQUESTS */}
+        <h1 className="text-3xl font-bold mb-6">Sent Trade Requests</h1>
+
+        {sentTradeRequests.length === 0 ? (
+          <p>No sent trade requests at the moment.</p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {sentTradeRequests.map((trade) => (
+              <div
+                key={trade._id}
+                className="bg-white p-4 rounded shadow-md flex flex-col gap-4"
+              >
+                <h2 className="text-xl font-semibold">Requested Product</h2>
+                <TradeProductCard product={trade.requestedProduct} />
+
+                <h2 className="text-xl font-semibold">Offered Product</h2>
+                <TradeProductCard product={trade.offeredProduct} />
+
+                <p className="text-gray-700">
+                  <strong>Status:</strong>{" "}
+                  {trade.status === "pending"
+                    ? "Pending"
+                    : trade.status === "accepted"
+                    ? "Accepted ✅"
+                    : "Rejected ❌"}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* <h1 className="text-3xl font-bold mb-6">Incoming Trade Requests</h1>
 
         {tradeRequests.length === 0 ? (
           <p>No trade requests at the moment.</p>
@@ -187,7 +309,7 @@ const TradeRequestsPage = () => {
               </div>
             ))}
           </div>
-        )}
+        )} */}
       </div>
     </>
   );
