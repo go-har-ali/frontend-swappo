@@ -69,28 +69,6 @@ const TradeRequestsPage = () => {
     fetchTradeRequests();
   }, [token]);
 
-  // useEffect(() => {
-  //   const fetchTradeRequests = async () => {
-  //     console.log("Fetching trade requests for user:", userId);
-  //     try {
-  //       const res = await fetch(`${BASE_URL}/api/trade-requests/received`, {
-  //         method: "GET",
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       });
-  //       const data = await res.json();
-  //       console.log("Received trade requests:", data);
-
-  //       setTradeRequests(data);
-  //     } catch (error) {
-  //       console.error("Failed to fetch trade requests:", error);
-  //     }
-  //   };
-
-  //   fetchTradeRequests();
-  // }, [token]);
-
   useEffect(() => {
     socket.emit("join", userId);
 
@@ -104,10 +82,17 @@ const TradeRequestsPage = () => {
   }, [userId]);
 
   const TradeProductCard = ({ product }) => {
-    const imageUrl =
-      product?.images?.length > 0
-        ? `${BASE_URL}/uploads/${product.images[0]}`
-        : "https://via.placeholder.com/150";
+    const validImage =
+      product?.images?.length > 0 && product.images[0]?.trim() !== "";
+
+    const imageUrl = validImage
+      ? `${BASE_URL}/uploads/${product.images[0]}`
+      : "https://via.placeholder.com/150";
+
+    // const imageUrl =
+    //   product?.images?.length > 0
+    //     ? `${BASE_URL}/uploads/${product.images[0]}`
+    //     : "https://via.placeholder.com/150";
 
     return (
       <div className="flex items-center gap-4">
@@ -257,8 +242,37 @@ const TradeRequestsPage = () => {
             ))}
           </div>
         )}
+      </div>
+    </>
+  );
+};
 
-        {/* <h1 className="text-3xl font-bold mb-6">Incoming Trade Requests</h1>
+export default TradeRequestsPage;
+
+// useEffect(() => {
+//   const fetchTradeRequests = async () => {
+//     console.log("Fetching trade requests for user:", userId);
+//     try {
+//       const res = await fetch(`${BASE_URL}/api/trade-requests/received`, {
+//         method: "GET",
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//         },
+//       });
+//       const data = await res.json();
+//       console.log("Received trade requests:", data);
+
+//       setTradeRequests(data);
+//     } catch (error) {
+//       console.error("Failed to fetch trade requests:", error);
+//     }
+//   };
+
+//   fetchTradeRequests();
+// }, [token]);
+
+{
+  /* <h1 className="text-3xl font-bold mb-6">Incoming Trade Requests</h1>
 
         {tradeRequests.length === 0 ? (
           <p>No trade requests at the moment.</p>
@@ -309,13 +323,8 @@ const TradeRequestsPage = () => {
               </div>
             ))}
           </div>
-        )} */}
-      </div>
-    </>
-  );
-};
-
-export default TradeRequestsPage;
+        )} */
+}
 
 // const TradeProductCard = ({ product }) => {
 //   const imageUrl =
