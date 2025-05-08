@@ -1,6 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { CartProvider } from "./context/CartContext";
 import { useState, useEffect } from "react";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
 //import Navbar from "./components/Navbar";
 import Home from "./components/Home";
 import Cart from "./components/Cart";
@@ -15,6 +17,15 @@ import Inventory from "./components/Inventory";
 import MakeAnOffer from "./components/Offer";
 import socket from "./socket";
 import SelectOfferPage from "./components/SelectOfferPage";
+import Payment from "./components/Payment.jsx";
+
+const stripePromise = loadStripe(
+  "pk_live_51RLEETBMLyUDYEuit3THsuCfms3nuCjmaQ4EOeubimrEMEwBxcSPOAJA1znd383OQKiDfJvQUUW5vi80PCDAHVcC00wYHGG5Kj"
+);
+
+<Elements stripe={stripePromise}>
+  <Payment />
+</Elements>;
 
 function App() {
   useEffect(() => {

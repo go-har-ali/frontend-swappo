@@ -1,8 +1,17 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import Payment from "./Payment";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+
+// Replace with your actual public key
+const stripePromise = loadStripe(
+  "pk_live_51RLEETBMLyUDYEuit3THsuCfms3nuCjmaQ4EOeubimrEMEwBxcSPOAJA1znd383OQKiDfJvQUUW5vi80PCDAHVcC00wYHGG5Kj"
+);
 
 const CheckoutPage = () => {
+  const [step, setStep] = useState("info"); // info or payment
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -12,8 +21,27 @@ const CheckoutPage = () => {
   const [state, setState] = useState("");
   const [postcode, setPostcode] = useState("");
   const [phone, setPhone] = useState("");
-
   const navigate = useNavigate();
+
+  const tradeId = "example-trade-id"; // Replace with actual trade ID when available
+
+  const handleContinueToPayment = () => {
+    if (
+      !email ||
+      !firstName ||
+      !lastName ||
+      !address ||
+      !suburb ||
+      !state ||
+      !postcode ||
+      !phone
+    ) {
+      alert("Please fill in all required fields.");
+      return;
+    }
+
+    setStep("payment");
+  };
 
   return (
     <div className="flex flex-col lg:flex-row min-h-screen bg-gray-100 p-6">
@@ -24,124 +52,139 @@ const CheckoutPage = () => {
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h1 className="text-2xl font-semibold">Example Swappo Store</h1>
+        <h1 className="text-2xl font-semibold">Swappo Checkout</h1>
         <p className="text-gray-500">
           Cart {">"} Information {">"} Shipping {">"} Payment
         </p>
 
-        {/* Express Checkout */}
-        <div className="my-4 flex gap-3">
-          <button className="bg-purple-600 text-white p-2 rounded w-full">
-            Shop Pay
-          </button>
-          <button className="bg-yellow-500 text-black p-2 rounded w-full">
-            PayPal
-          </button>
-          <button className="bg-black text-white p-2 rounded w-full">
-            Google Pay
-          </button>
-        </div>
+        {step === "info" ? (
+          <>
+            {/* Express Checkout */}
+            <div className="my-4 flex gap-3">
+              <button className="bg-purple-600 text-white p-2 rounded w-full">
+                Shop Pay
+              </button>
+              <button className="bg-yellow-500 text-black p-2 rounded w-full">
+                PayPal
+              </button>
+              <button className="bg-black text-white p-2 rounded w-full">
+                Google Pay
+              </button>
+            </div>
 
-        <div className="text-center text-gray-500 my-2">OR</div>
+            <div className="text-center text-gray-500 my-2">OR</div>
 
-        {/* Contact Information */}
-        <h2 className="text-lg font-semibold mb-2">Contact Information</h2>
-        <input
-          type="email"
-          placeholder="Email"
-          className="border p-2 w-full mb-3 rounded"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <label className="flex items-center space-x-2 text-gray-600">
-          <input type="checkbox" />
-          <span>Email me with news and offers</span>
-        </label>
+            {/* Contact Information */}
+            <h2 className="text-lg font-semibold mb-2">Contact Information</h2>
+            <input
+              type="email"
+              placeholder="Email"
+              className="border p-2 w-full mb-3 rounded"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <label className="flex items-center space-x-2 text-gray-600">
+              <input type="checkbox" />
+              <span>Email me with news and offers</span>
+            </label>
 
-        {/* Shipping Address */}
-        <h2 className="text-lg font-semibold mt-4">Shipping Address</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <input
-            type="text"
-            placeholder="First Name"
-            className="border p-2 rounded"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-          />
-          <input
-            type="text"
-            placeholder="Last Name"
-            className="border p-2 rounded"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-          />
-        </div>
-        <input
-          type="text"
-          placeholder="Company (optional)"
-          className="border p-2 w-full my-3 rounded"
-        />
-        <input
-          type="text"
-          placeholder="Address"
-          className="border p-2 w-full mb-3 rounded"
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="Suburb"
-          className="border p-2 w-full mb-3 rounded"
-          value={suburb}
-          onChange={(e) => setSuburb(e.target.value)}
-        />
+            {/* Shipping Address */}
+            <h2 className="text-lg font-semibold mt-4">Shipping Address</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <input
+                type="text"
+                placeholder="First Name"
+                className="border p-2 rounded"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+              />
+              <input
+                type="text"
+                placeholder="Last Name"
+                className="border p-2 rounded"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+              />
+            </div>
+            <input
+              type="text"
+              placeholder="Company (optional)"
+              className="border p-2 w-full my-3 rounded"
+            />
+            <input
+              type="text"
+              placeholder="Address"
+              className="border p-2 w-full mb-3 rounded"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="Suburb"
+              className="border p-2 w-full mb-3 rounded"
+              value={suburb}
+              onChange={(e) => setSuburb(e.target.value)}
+            />
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <select
-            className="border p-2 rounded"
-            value={country}
-            onChange={(e) => setCountry(e.target.value)}
-          >
-            <option>Australia</option>
-            <option>USA</option>
-            <option>UK</option>
-          </select>
-          <input
-            type="text"
-            placeholder="State/Territory"
-            className="border p-2 rounded"
-            value={state}
-            onChange={(e) => setState(e.target.value)}
-          />
-          <input
-            type="text"
-            placeholder="Postcode"
-            className="border p-2 rounded"
-            value={postcode}
-            onChange={(e) => setPostcode(e.target.value)}
-          />
-        </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <select
+                className="border p-2 rounded"
+                value={country}
+                onChange={(e) => setCountry(e.target.value)}
+              >
+                <option>Australia</option>
+                <option>USA</option>
+                <option>UK</option>
+              </select>
+              <input
+                type="text"
+                placeholder="State/Territory"
+                className="border p-2 rounded"
+                value={state}
+                onChange={(e) => setState(e.target.value)}
+              />
+              <input
+                type="text"
+                placeholder="Postcode"
+                className="border p-2 rounded"
+                value={postcode}
+                onChange={(e) => setPostcode(e.target.value)}
+              />
+            </div>
 
-        <input
-          type="text"
-          placeholder="Phone"
-          className="border p-2 w-full mt-3 rounded"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-        />
+            <input
+              type="text"
+              placeholder="Phone"
+              className="border p-2 w-full mt-3 rounded"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+            />
 
-        {/* Navigation */}
-        <div className="flex justify-between items-center mt-4">
-          <button onClick={() => navigate("/cart")} className="text-blue-600">
-            ← Return to Cart
-          </button>
-          <motion.button
-            className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition"
-            whileHover={{ scale: 1.05 }}
-          >
-            Continue to Shipping
-          </motion.button>
-        </div>
+            {/* Navigation */}
+            <div className="flex justify-between items-center mt-4">
+              <button
+                onClick={() => navigate("/cart")}
+                className="text-blue-600"
+              >
+                ← Return to Cart
+              </button>
+              <motion.button
+                className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition"
+                whileHover={{ scale: 1.05 }}
+                onClick={handleContinueToPayment}
+              >
+                Continue to Payment
+              </motion.button>
+            </div>
+          </>
+        ) : (
+          <>
+            <h2 className="text-lg font-semibold mb-2">Payment</h2>
+            <Elements stripe={stripePromise}>
+              <Payment tradeId={tradeId} />
+            </Elements>
+          </>
+        )}
       </motion.div>
 
       {/* Right Side - Order Summary */}
