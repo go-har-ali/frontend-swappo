@@ -154,6 +154,12 @@ const Cart = () => {
                 >
                   Clear Cart
                 </button>
+                <button
+                  onClick={() => navigate("/checkout")}
+                  className="bg-green-600 text-white px-6 py-3 rounded-lg text-lg"
+                >
+                  Proceed to Checkout
+                </button>
               </div>
             </>
           )}

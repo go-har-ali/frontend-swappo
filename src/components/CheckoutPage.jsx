@@ -7,7 +7,7 @@ import { loadStripe } from "@stripe/stripe-js";
 
 // Replace with your actual public key
 const stripePromise = loadStripe(
-  "pk_live_51RLEETBMLyUDYEuit3THsuCfms3nuCjmaQ4EOeubimrEMEwBxcSPOAJA1znd383OQKiDfJvQUUW5vi80PCDAHVcC00wYHGG5Kj"
+  "pk_test_51RLEETBMLyUDYEui0JW7ZR5Okpc8kJKyWx3gs8S1h7eBP3PTLbFANT1vaEN8G19frCyp7uOO8PpWctGRtI8qDr5R00g4XYgEXg"
 );
 
 const CheckoutPage = () => {
